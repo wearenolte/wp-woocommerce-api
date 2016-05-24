@@ -1,4 +1,4 @@
-<?php namespace Lean\Woocommerce\Api;
+<?php namespace Lean\Woocommerce;
 
 /**
  * Main class loader for initializing and  setting up the plugin.

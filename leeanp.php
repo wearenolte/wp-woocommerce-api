@@ -1,4 +1,4 @@
-<?php namespace Lean\Woocommerce\Api;
+<?php namespace Lean\Woocommerce;
 /**
  * Plugin Name: Lean Woocommerce Api
  * Description: Woocommerce API endpoints for Lean.
@@ -7,6 +7,7 @@
  * Author URI: http://getmoxied.net
  * Text Domain: leanwoocommerceapi
  */
+
 
 // General constants.
 define( 'LEAN_WOOCOMMERCE_API_PLUGIN_NAME', 'LeanWoocommerceApi Plugin' );
@@ -20,4 +21,4 @@ define( 'LEAN_WOOCOMMERCE_API_TEXT_DOMAIN', 'leanwoocommerceapi' );
 require_once LEAN_WOOCOMMERCE_API_PLUGIN_DIR . 'vendor/autoload.php';
 
 // Run the plugin setup.
-require_once LEAN_WOOCOMMERCE_API_PLUGIN_DIR . 'PluginSetup.php';
+new PluginSetup();
