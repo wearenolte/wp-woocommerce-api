@@ -40,9 +40,7 @@ class PluginSetup {
 			exit;
 		}
 
-		error_log(self::WOOCOMMERCE_PATH);
-		error_log(is_plugin_active( self::WOOCOMMERCE_PATH ));
-		if ( !is_plugin_active( self::WOOCOMMERCE_PATH ) ) {
+		if ( ! is_plugin_active( self::WOOCOMMERCE_PATH ) ) {
 			deactivate_plugins( LEAN_WOOCOMMERCE_API_PLUGIN_NAME );
 
 			echo wp_kses(
