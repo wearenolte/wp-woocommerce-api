@@ -7,6 +7,8 @@
  */
 class PluginSetup {
 
+	const WOOCOMMERCE_PATH = 'woocommerce/woocommerce.php';
+
 	/**
 	 * Checks program environment to see if all dependencies are available. If at least one
 	 * dependency is absent, deactivate the plugin.
@@ -31,6 +33,24 @@ class PluginSetup {
 						'Plugin %s requires WordPress %s or higher.',
 						LEAN_WOOCOMMERCE_API_TEXT_DOMAIN
 					), LEAN_WOOCOMMERCE_API_API_VERSION, LEAN_WOOCOMMERCE_API_MINIMUM_WP_VERSION
+				),
+				array()
+			);
+			wp_die();
+			exit;
+		}
+
+		error_log(self::WOOCOMMERCE_PATH);
+		error_log(is_plugin_active( self::WOOCOMMERCE_PATH ));
+		if ( !is_plugin_active( self::WOOCOMMERCE_PATH ) ) {
+			deactivate_plugins( LEAN_WOOCOMMERCE_API_PLUGIN_NAME );
+
+			echo wp_kses(
+				sprintf(
+					esc_html__(
+						'%s requires Woocommerce Plugin %s or higher activated.',
+						LEAN_WOOCOMMERCE_API_TEXT_DOMAIN
+					), LEAN_WOOCOMMERCE_API_PLUGIN_NAME, LEAN_WOOCOMMERCE_API_MINIMUM_WC_VERSION
 				),
 				array()
 			);
