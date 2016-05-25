@@ -18,7 +18,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Lean\\Woocommerce\\": "."
+      "Lean\\Woocommerce\\": [".", "./src"]
     }
   },
   "scripts": {
