@@ -13,6 +13,9 @@ class PluginSetup {
 
 	const WOOCOMMERCE_PATH = 'woocommerce/woocommerce.php';
 
+	/**
+	 * Init function.
+	 */
 	public static function init() {
 		Bootstrap::init();
 	}

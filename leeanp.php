@@ -26,4 +26,4 @@ $setup = new PluginSetup();
 register_activation_hook( __FILE__, [ $setup, 'maybe_deactivate' ] );
 
 // Init ECommerce endpoints.
-add_action('rest_api_init', [ $setup, 'init' ] );
+add_action( 'rest_api_init', [ $setup, 'init' ] );
