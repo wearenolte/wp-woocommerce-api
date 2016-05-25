@@ -84,10 +84,10 @@ class CartEndpoint extends AbstractEndpoint
 			return new \WP_Error( 400, 'Invalid data', [ 'status' => 400 ] );
 		}
 
-		\WC()->cart->get_cart_from_session();
-		\WC()->cart->add_to_cart( intval( $product_id ) );
+		$cart = self::get_cart();
+		$cart->add_to_cart( intval( $product_id ) );
 
-		return \WC()->cart;
+		return $cart;
 	}
 
 	/**
