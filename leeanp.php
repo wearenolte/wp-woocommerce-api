@@ -24,3 +24,6 @@ require_once LEAN_WOOCOMMERCE_API_PLUGIN_DIR . 'vendor/autoload.php';
 // Run the plugin setup.
 $setup = new PluginSetup();
 register_activation_hook( __FILE__, [ $setup, 'maybe_deactivate' ] );
+
+// Init ECommerce endpoints.
+add_action('rest_api_init', [ $setup, 'init' ] );
