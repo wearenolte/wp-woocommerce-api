@@ -1,4 +1,4 @@
-<?php namespace Lean\Woocommerce\Modules\Cart;
+<?php namespace Lean\Woocommerce\Api;
 
 use Lean\AbstractEndpoint;
 
@@ -7,7 +7,7 @@ use Lean\AbstractEndpoint;
  *
  * @package Leean\Woocomerce\Modules\Cart
  */
-class CartEndpoint extends AbstractEndpoint
+class Cart extends AbstractEndpoint
 {
 	/**
 	 * Endpoint path
@@ -17,9 +17,6 @@ class CartEndpoint extends AbstractEndpoint
 	 */
 	protected $endpoint = '/ecommerce/cart';
 
-	const POST_METHOD = 'POST';
-	const UPDATE_METHOD = 'UPDATE';
-
 	/**
 	 * @param \WP_REST_Request $request
 	 *
@@ -28,7 +25,7 @@ class CartEndpoint extends AbstractEndpoint
 	public function endpoint_callback( \WP_REST_Request $request ) {
 		$method = $request->get_method();
 
-		if ( in_array($method, [\WP_REST_Server::READABLE]) ) {
+		if ( in_array( $method, [\WP_REST_Server::READABLE] ) ) {
 			return self::get_cart();
 		} else if ( in_array( $method, str_getcsv( \WP_REST_Server::EDITABLE ) ) ) {
 			return self::add_to_cart( $request );

@@ -1,9 +1,6 @@
 <?php namespace Lean\Woocommerce;
 
 
-use Lean\Woocommerce\Modules\Bootstrap;
-
-
 /**
  * Main class loader for initializing and  setting up the plugin.
  *
@@ -12,13 +9,6 @@ use Lean\Woocommerce\Modules\Bootstrap;
 class PluginSetup {
 
 	const WOOCOMMERCE_PATH = 'woocommerce/woocommerce.php';
-
-	/**
-	 * Init function.
-	 */
-	public static function init() {
-		Bootstrap::init();
-	}
 
 	/**
 	 * Checks program environment to see if all dependencies are available. If at least one
