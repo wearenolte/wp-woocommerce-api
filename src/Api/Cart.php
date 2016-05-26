@@ -18,16 +18,18 @@ class Cart extends AbstractEndpoint
 	protected $endpoint = '/ecommerce/cart';
 
 	/**
-	 * @param \WP_REST_Request $request
+	 * Endpoint callback override.
+	 *
+	 * @param \WP_REST_Request $request Request object.
 	 *
 	 * @return array|\WP_Error
 	 */
 	public function endpoint_callback( \WP_REST_Request $request ) {
 		$method = $request->get_method();
 
-		if ( in_array( $method, [\WP_REST_Server::READABLE] ) ) {
+		if ( in_array( $method, [ \WP_REST_Server::READABLE ], true ) ) {
 			return self::get_cart();
-		} else if ( in_array( $method, str_getcsv( \WP_REST_Server::EDITABLE ) ) ) {
+		} else if ( in_array( $method, str_getcsv( \WP_REST_Server::EDITABLE ), true ) ) {
 			return self::add_to_cart( $request );
 		} else {
 			return new \WP_Error( 405, 'Method not allowed', [ 'status' => 405 ] );
@@ -55,29 +57,29 @@ class Cart extends AbstractEndpoint
 	 *
 	 * @return array
 	 */
-	public function endpoint_args() 	{
+	public function endpoint_args() {
 		return [
 			'product_id' => [
 				'default' => false,
 				'required' => false,
-				'validate_callback' => function ( $product_id ) {
-					return false === $product_id || intval ( $product_id ) >= 0;
-				}
-			]
+				'validate_callback' => function( $product_id ) {
+					return false === $product_id || intval( $product_id ) >= 0;
+				},
+			],
 		];
 	}
 
 	/**
 	 * Add an item to the cart, and return the new cart.
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request Request object.
 	 * @return array
 	 */
 	public static function add_to_cart( \WP_REST_Request $request ) {
 
-		$product_id = $request->get_param('product_id');
+		$product_id = $request->get_param( 'product_id' );
 
-		if ( !$product_id ) {
+		if ( ! $product_id ) {
 			return new \WP_Error( 400, 'Invalid data', [ 'status' => 400 ] );
 		}
 
@@ -97,5 +99,4 @@ class Cart extends AbstractEndpoint
 
 		return \WC()->cart;
 	}
-
 }

@@ -7,7 +7,6 @@ use Lean\Woocommerce\Api\Cart;
  *
  * @package Leean\Woocomerce\Modules
  */
-
 class Bootstrap
 {
 	/**
