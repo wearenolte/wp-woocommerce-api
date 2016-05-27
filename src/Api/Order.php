@@ -3,7 +3,9 @@
 use Lean\AbstractEndpoint;
 
 /**
- * Class Order.
+ * Class Order. This class implements the order endpoints. Users are able
+ * to create a new order with the current session cart or retreive their
+ * orders (this is only possible for authenticated users!).
  *
  * @package Lean\Woocommerce\Api
  */
@@ -77,13 +79,17 @@ class Order extends AbstractEndpoint
 	 * @return array Order.
 	 */
 	public static function place_order( \WP_REST_Request $request ) {
-		// TODO: Create a hook with POST information in $request.
 
 		$cart = Cart::get_cart();
 
 		if ( $cart->is_empty() ) {
 			return new \WP_Error( 400, 'Your cart is empty. Order was not created.', [ 'status' => 400 ] );
 		}
+
+		do_action( 'ln_wc_pre_order', $request, $cart );
+
+		// Load our cart.
+		\WC()->cart = $cart;
 
 		$checkout = new \WC_Checkout();
 		$order_id = $checkout->create_order();
@@ -96,10 +102,23 @@ class Order extends AbstractEndpoint
 	}
 
 	/**
-	 * Return all logged user orders.
+	 * Return all logged user orders. If the user is not logged_in returns an empty array.
+	 *
+	 * @return array Orders|Empty array.
 	 */
 	public static function get_user_orders() {
-		// TODO.
+		if ( is_user_logged_in() ) {
+			$customer_orders = get_posts( array(
+				'numberposts' => -1,
+				'meta_key'    => '_customer_user',
+				'meta_value'  => get_current_user_id(),
+				'post_type'   => wc_get_order_types(),
+				'post_status' => array_keys( wc_get_order_statuses() ),
+			) );
+
+			return $customer_orders;
+		}
+
 		return [];
 	}
 
