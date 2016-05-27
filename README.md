@@ -14,6 +14,6 @@ Called before the order is created.
 
 Parameters
 ```php
-$request;  // WP_REST_Request.
-$order_id; // int Order id.
+$request;   // WP_REST_Request.
+$cart;      // WC_Cart Cart instance.
 ```
