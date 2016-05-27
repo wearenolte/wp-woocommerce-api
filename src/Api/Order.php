@@ -11,6 +11,8 @@ use Lean\AbstractEndpoint;
  */
 class Order extends AbstractEndpoint
 {
+
+	const ORDERS_PER_PAGE = 10;
 	/**
 	 * Endpoint path
 	 *
@@ -29,10 +31,10 @@ class Order extends AbstractEndpoint
 	public function endpoint_callback( \WP_REST_Request $request ) {
 		$method = $request->get_method();
 
-		if ( $method ===  \WP_REST_Server::CREATABLE  ) {
+		if ( \WP_REST_Server::CREATABLE === $method ) {
 			// Create an order.
-			return self::place_order($request);
-		} else if ( $method === \WP_REST_Server::READABLE ) {
+			return self::place_order( $request );
+		} else if ( \WP_REST_Server::READABLE === $method ) {
 			// Get all Logged User orders. Returns nothing if the user is not logged in.
 			return self::get_user_orders();
 		} else {
@@ -109,11 +111,11 @@ class Order extends AbstractEndpoint
 	public static function get_user_orders() {
 		if ( is_user_logged_in() ) {
 			$customer_orders = get_posts( array(
-				'numberposts' => -1,
-				'meta_key'    => '_customer_user',
-				'meta_value'  => get_current_user_id(),
-				'post_type'   => wc_get_order_types(),
-				'post_status' => array_keys( wc_get_order_statuses() ),
+				'posts_per_page'	=> self::ORDERS_PER_PAGE,
+				'meta_key'    		=> '_customer_user',
+				'meta_value'  		=> get_current_user_id(),
+				'post_type'   		=> wc_get_order_types(),
+				'post_status' 		=> array_keys( wc_get_order_statuses() ),
 			) );
 
 			return $customer_orders;
@@ -121,5 +123,4 @@ class Order extends AbstractEndpoint
 
 		return [];
 	}
-
 }
