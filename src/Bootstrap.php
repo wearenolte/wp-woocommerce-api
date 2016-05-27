@@ -1,11 +1,11 @@
 <?php namespace Lean\Woocommerce;
 
-use Lean\Woocommerce\Api\Cart;
+use Lean\Woocommerce\Api;
 
 /**
  * Class Bootstrap. This class is used to load all the endpoints of the Plugin.
  *
- * @package Leean\Woocomerce\Modules
+ * @package Lean\Woocomerce\Modules
  */
 class Bootstrap
 {
@@ -13,6 +13,7 @@ class Bootstrap
 	 * Init function.
 	 */
 	public static function init() {
-		Cart::init();
+		Api\Cart::init();
+		Api\Order::init();
 	}
 }
