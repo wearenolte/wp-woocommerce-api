@@ -2,7 +2,7 @@
 
 /**
  * Class Filters. Custom filters for the plugin.
- * 
+ *
  * @package Lean\Woocommerce\Utils
  */
 class Filters
