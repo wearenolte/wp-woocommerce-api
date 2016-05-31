@@ -14,6 +14,11 @@ use Lean\Woocommerce\Utils\ErrorCodes;
 class Order extends AbstractEndpoint
 {
 
+	const SHIPPING_REQUIRED_FIELDS = [];
+	const BILLING_REQUIRED_FIELDS = [];
+	const BILLING_KEY = 'billing';
+	const SHIPPING_KEY = 'shipping';
+
 	const ORDERS_PER_PAGE = 10;
 	/**
 	 * Endpoint path
@@ -75,6 +80,20 @@ class Order extends AbstractEndpoint
 					return false === $order_id || intval( $order_id ) >= 0;
 				},
 			],
+			'shipping' => [
+				'default' => false,
+				'required' => false,
+				'validate_callback' => function( $shipping ) {
+					return false === $shipping || is_array( $shipping );
+				},
+			],
+			'billing' => [
+				'default' => false,
+				'required' => false,
+				'validate_callback' => function( $billing ) {
+					return false === $billing || is_array( $billing );
+				},
+			],
 		];
 	}
 
@@ -107,8 +126,24 @@ class Order extends AbstractEndpoint
 		$order_id = $checkout->create_order();
 		$order = new \WC_Order( $order_id );
 
+		do_action( 'ln_wc_after_order', $request, $cart );
+		// If the user is not logged in, we need to pass the billing and shipping address to the order.
+		if ( !is_user_logged_in() ) {
+			return self::update_guest_order( $request, $order );
+		}
+
 		// Empty the current cart.
 		$cart->empty_cart();
+
+		return $order;
+	}
+
+	public static function update_guest_order( \WP_REST_Request $request, $order ) {
+		do_action( 'ln_wc_pre_update_guest_order', $request, $order );
+
+		// Update order with shipping and billing information for the Guest.
+
+		do_action( 'ln_wc_after_update_guest_order', $request, $order );
 
 		return $order;
 	}
