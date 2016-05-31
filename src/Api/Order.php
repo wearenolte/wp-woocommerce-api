@@ -3,6 +3,7 @@
 use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
+use Lean\Woocommerce\Utils\Filters;
 
 /**
  * Class Order. This class implements the order endpoints. Users are able
@@ -103,7 +104,7 @@ class Order extends AbstractEndpoint
 			);
 		}
 
-		do_action( 'ln_wc_pre_order', $request, $cart );
+		do_action( Filters::PRE_ORDER, $request, $cart );
 
 		// Load our cart.
 		\WC()->cart = $cart;
@@ -112,7 +113,7 @@ class Order extends AbstractEndpoint
 		$order_id = $checkout->create_order();
 		$order = new \WC_Order( $order_id );
 
-		do_action( 'ln_wc_after_order', $request, $cart );
+		do_action( Filters::AFTER_ORDER, $request, $cart );
 
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
 		if ( ! is_user_logged_in() ) {
@@ -133,7 +134,7 @@ class Order extends AbstractEndpoint
 	 * @return \WP_Error || \WC_Order
 	 */
 	public static function update_guest_order( \WP_REST_Request $request, $order ) {
-		do_action( 'ln_wc_pre_update_guest_order', $request, $order );
+		do_action( Filters::GUEST_PRE_UPDATE_ORDER, $request, $order );
 
 		$params = $request->get_body_params();
 
@@ -157,7 +158,7 @@ class Order extends AbstractEndpoint
 		$order->set_address( $params['shipping'], self::SHIPPING_KEY );
 		$order->set_address( $params['billing'], self::BILLING_KEY );
 
-		do_action( 'ln_wc_after_update_guest_order', $request, $order );
+		do_action( Filters::GUEST_AFTER_UPDATE_ORDER, $request, $order );
 
 		return $order;
 	}
