@@ -5,7 +5,7 @@
  *
  * @package Lean\Woocommerce\Utils
  */
-class Filters
+class Hooks
 {
 	const PRE_ORDER = 'ln_wc_pre_order';
 	const AFTER_ORDER = 'ln_wc_after_order';

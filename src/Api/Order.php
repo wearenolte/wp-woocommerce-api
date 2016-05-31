@@ -3,7 +3,7 @@
 use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
-use Lean\Woocommerce\Utils\Filters;
+use Lean\Woocommerce\Utils\Hooks;
 
 /**
  * Class Order. This class implements the order endpoints. Users are able
@@ -14,11 +14,22 @@ use Lean\Woocommerce\Utils\Filters;
  */
 class Order extends AbstractEndpoint
 {
-
-	const SHIPPING_REQUIRED_FIELDS = [ 'first_name', 'last_name', 'address_1', 'city', 'state', 'postcode', 'country', 'email' ];
-	const BILLING_REQUIRED_FIELDS = [ 'first_name', 'last_name', 'address_1', 'city', 'state', 'postcode', 'country' ];
 	const BILLING_KEY = 'billing';
 	const SHIPPING_KEY = 'shipping';
+
+	/**
+	 * Array of Shipping required filds.
+	 *
+	 * @var array
+	 */
+	static private $shipping_required_fields = [];
+
+	/**
+	 * Array of Billing required fields.
+	 *
+	 * @var array
+	 */
+	static private $billing_required_fields = [];
 
 	const ORDERS_PER_PAGE = 10;
 	/**
@@ -104,16 +115,21 @@ class Order extends AbstractEndpoint
 			);
 		}
 
-		do_action( Filters::PRE_ORDER, $request, $cart );
+		do_action( Hooks::PRE_ORDER, $request, $cart );
 
 		// Load our cart.
 		\WC()->cart = $cart;
 
 		$checkout = new \WC_Checkout();
+
+		// Get the Billing and Shipping required fields.
+		self::$billing_required_fields = array_keys( $checkout->checkout_fields[ self::BILLING_KEY ] );
+		self::$shipping_required_fields = array_keys( $checkout->checkout_fields[ self::SHIPPING_KEY ] );
+
 		$order_id = $checkout->create_order();
 		$order = new \WC_Order( $order_id );
 
-		do_action( Filters::AFTER_ORDER, $request, $cart );
+		do_action( Hooks::AFTER_ORDER, $request, $cart );
 
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
 		if ( ! is_user_logged_in() ) {
@@ -134,7 +150,7 @@ class Order extends AbstractEndpoint
 	 * @return \WP_Error || \WC_Order
 	 */
 	public static function update_guest_order( \WP_REST_Request $request, $order ) {
-		do_action( Filters::GUEST_PRE_UPDATE_ORDER, $request, $order );
+		do_action( Hooks::GUEST_PRE_UPDATE_ORDER, $request, $order );
 
 		$params = $request->get_body_params();
 
@@ -158,7 +174,7 @@ class Order extends AbstractEndpoint
 		$order->set_address( $params['shipping'], self::SHIPPING_KEY );
 		$order->set_address( $params['billing'], self::BILLING_KEY );
 
-		do_action( Filters::GUEST_AFTER_UPDATE_ORDER, $request, $order );
+		do_action( Hooks::GUEST_AFTER_UPDATE_ORDER, $request, $order );
 
 		return $order;
 	}
@@ -170,10 +186,7 @@ class Order extends AbstractEndpoint
 	 * @return bool
 	 */
 	public static function check_post_address( $params ) {
-		if ( ! array_key_exists( self::SHIPPING_KEY, $params ) || ! array_key_exists( self::BILLING_KEY, $params ) ) {
-			return false;
-		}
-		return true;
+		return ! isset( $params[ self::SHIPPING_KEY ] ) || ! isset( $params[ self::BILLING_KEY ] );
 	}
 
 	/**
@@ -184,11 +197,11 @@ class Order extends AbstractEndpoint
 	 */
 	public static function fields_have_errors( $params ) {
 		$errors = 0;
-		$required_billing = count( self::BILLING_REQUIRED_FIELDS );
-		$required_shipping = count( self::SHIPPING_REQUIRED_FIELDS );
+		$required_billing = count( self::$billing_required_fields );
+		$required_shipping = count( self::$shipping_required_fields );
 
-		$array_billing = array_flip( self::BILLING_REQUIRED_FIELDS );
-		$array_shipping = array_flip( self::SHIPPING_REQUIRED_FIELDS );
+		$array_billing = array_flip( self::$billing_required_fields );
+		$array_shipping = array_flip( self::$shipping_required_fields );
 
 		if ( count( array_intersect_key( $params[ self::BILLING_KEY ], $array_billing ) ) < $required_billing ) {
 			$errors += 1;
