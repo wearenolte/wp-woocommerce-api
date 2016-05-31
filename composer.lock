@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0d11bb6734e2214e4a42acd86dea459c",
-    "content-hash": "a3ec5b3a17b0dbefaa25f97b1c0cc6e2",
+    "hash": "321a20f047d052fe209414d1b3283b28",
+    "content-hash": "eb267f10d283727803ca1be9c40c0ece",
     "packages": [
         {
             "name": "composer/installers",
@@ -108,17 +108,55 @@
             "time": "2016-04-13 19:46:30"
         },
         {
-            "name": "moxie-lean/wp-endpoint",
-            "version": "1.0.0",
+            "name": "epoch2/http-codes",
+            "version": "v1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/moxie-lean/wp-endpoint.git",
-                "reference": "a0d57f6cd385a720c2c0d2658d46bb199c65295e"
+                "url": "https://github.com/Epoch2/http-codes.git",
+                "reference": "c21375fd1c7a95036b68e26fccbca4b55f97de41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moxie-lean/wp-endpoint/zipball/a0d57f6cd385a720c2c0d2658d46bb199c65295e",
-                "reference": "a0d57f6cd385a720c2c0d2658d46bb199c65295e",
+                "url": "https://api.github.com/repos/Epoch2/http-codes/zipball/c21375fd1c7a95036b68e26fccbca4b55f97de41",
+                "reference": "c21375fd1c7a95036b68e26fccbca4b55f97de41",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Epoch2": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Johan Vester",
+                    "homepage": "http://jvester.se"
+                }
+            ],
+            "description": "Small PHP library for easily accessing HTTP Status Codes.",
+            "keywords": [
+                "http",
+                "http code",
+                "http status"
+            ],
+            "time": "2015-06-04 12:14:17"
+        },
+        {
+            "name": "moxie-lean/wp-endpoint",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moxie-lean/wp-endpoint.git",
+                "reference": "18507ef0f018676a60c874fdf22f9a4c722733ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moxie-lean/wp-endpoint/zipball/18507ef0f018676a60c874fdf22f9a4c722733ef",
+                "reference": "18507ef0f018676a60c874fdf22f9a4c722733ef",
                 "shasum": ""
             },
             "require": {
@@ -145,23 +183,23 @@
                 }
             ],
             "description": "wp-endpoint",
-            "homepage": "https://github.com/moxie-leean/wp-endpoints-post/",
-            "time": "2016-04-24 03:37:17"
+            "homepage": "https://github.com/moxie-lean/wp-endpoints-post/",
+            "time": "2016-05-31 15:03:12"
         }
     ],
     "packages-dev": [
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.6.0",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "1bcdf03b068a530ac1962ce671dead356eeba43b"
+                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/1bcdf03b068a530ac1962ce671dead356eeba43b",
-                "reference": "1bcdf03b068a530ac1962ce671dead356eeba43b",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
+                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
                 "shasum": ""
             },
             "require": {
@@ -226,7 +264,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-04-03 22:58:34"
+            "time": "2016-05-30 22:24:32"
         },
         {
             "name": "wp-coding-standards/wpcs",
