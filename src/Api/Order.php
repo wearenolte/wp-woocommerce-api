@@ -117,7 +117,7 @@ class Order extends AbstractEndpoint
 
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
 		if ( ! is_user_logged_in() ) {
-			return self::update_guest_order( $request, $order );
+			$order = self::update_guest_order( $request, $order );
 		}
 
 		// Empty the current cart.
