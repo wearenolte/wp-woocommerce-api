@@ -1,6 +1,8 @@
 <?php namespace Lean\Woocommerce\Api;
 
 use Lean\AbstractEndpoint;
+use Epoch2\HttpCodes;
+use Lean\Woocommerce\Utils\ErrorCodes;
 
 /**
  * Class CartEndpoint.
@@ -32,7 +34,11 @@ class Cart extends AbstractEndpoint
 		} else if ( in_array( $method, str_getcsv( \WP_REST_Server::EDITABLE ), true ) ) {
 			return self::add_to_cart( $request );
 		} else {
-			return new \WP_Error( 405, 'Method not allowed', [ 'status' => 405 ] );
+			return new \WP_Error(
+				ErrorCodes::METHOD_ERROR,
+				'Method not allowed',
+				[ 'status' => HttpCodes::HTTP_METHOD_NOT_ALLOWED ]
+			);
 		}
 	}
 
@@ -80,7 +86,11 @@ class Cart extends AbstractEndpoint
 		$product_id = $request->get_param( 'product_id' );
 
 		if ( ! $product_id ) {
-			return new \WP_Error( 400, 'Invalid data', [ 'status' => 400 ] );
+			return new \WP_Error(
+				ErrorCodes::BAD_REQUEST,
+				'Invalid data, product_id is required.',
+				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
+			);
 		}
 
 		$cart = self::get_cart();
