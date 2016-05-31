@@ -1,6 +1,8 @@
 <?php namespace Lean\Woocommerce\Api;
 
 use Lean\AbstractEndpoint;
+use Epoch2\HttpCodes;
+use Lean\Woocommerce\Utils\ErrorCodes;
 
 /**
  * Class Order. This class implements the order endpoints. Users are able
@@ -38,7 +40,11 @@ class Order extends AbstractEndpoint
 			// Get all Logged User orders. Returns nothing if the user is not logged in.
 			return self::get_user_orders();
 		} else {
-			return new \WP_Error( 405, 'Method not allowed', [ 'status' => 405 ] );
+			return new \WP_Error(
+				ErrorCodes::METHOD_ERROR,
+				'Method not allowed',
+				[ 'status' => HttpCodes::HTTP_METHOD_NOT_ALLOWED ]
+			);
 		}
 	}
 
@@ -85,7 +91,11 @@ class Order extends AbstractEndpoint
 		$cart = Cart::get_cart();
 
 		if ( $cart->is_empty() ) {
-			return new \WP_Error( 400, 'Your cart is empty. Order was not created.', [ 'status' => 400 ] );
+			return new \WP_Error(
+				ErrorCodes::BAD_REQUEST,
+				'Your cart is empty. Order was not created.',
+				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
+			);
 		}
 
 		do_action( 'ln_wc_pre_order', $request, $cart );
