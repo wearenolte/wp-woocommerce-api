@@ -39,14 +39,14 @@ $request;   // WP_REST_Request.
 $cart;      // WC_Cart Cart instance.
 ```
 
-#### ln_wc_pre_update_guest_order
+##### ln_wc_pre_update_guest_order
 Called before the order shipping/billing address are updated (For Guest purchases only).
 ```php
 $request;   // WP_REST_Request.
 $order;     // WC_Order Order instance.
 ```
 
-#### ln_wc_after_update_guest_order
+##### ln_wc_after_update_guest_order
 Called after the order shipping/billing address are updated (For Guest purchases only).
 ```php
 $request;   // WP_REST_Request.
