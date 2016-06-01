@@ -20,7 +20,7 @@ only accepts `POST` and you are sending a `GET`.
 * `request_error` - This means your request could not be completed. This usually happens when you miss a parameter, or
 the requirements for this request were not met. More information can be found in the response message.
 
-### Filters
+### Hooks
 There are some actions you can use to add functionality to this plugin.
 
 ##### ln_wc_pre_order
@@ -51,4 +51,16 @@ Called after the order shipping/billing address are updated (For Guest purchases
 ```php
 $request;   // WP_REST_Request.
 $order;     // WC_Order Order instance.
+```
+
+##### ln_wc_pre_checkout
+Called before the payment is processed.
+```php
+$order_id;     // int Order id.
+```
+
+##### ln_wc_after_checkout
+Called after the payment is processed.
+```php
+$order_id;     // int Order id.
 ```

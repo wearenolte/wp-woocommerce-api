@@ -15,5 +15,6 @@ class Bootstrap
 	public static function init() {
 		Api\Cart::init();
 		Api\Order::init();
+		Api\Checkout::init();
 	}
 }

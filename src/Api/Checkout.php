@@ -3,6 +3,8 @@
 use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
+use Lean\Woocommerce\Utils\Hooks;
+use Lean\Woocommerce\Api\Order;
 
 /**
  * Class Checkout. 
@@ -11,6 +13,9 @@ use Lean\Woocommerce\Utils\ErrorCodes;
  */
 class Checkout extends AbstractEndpoint
 {
+
+	const ORDER_ID_PARAM = 'order_id';
+
 	/**
 	 * Endpoint path.
 	 *
@@ -30,7 +35,7 @@ class Checkout extends AbstractEndpoint
 		$method = $request->get_method();
 
 		if ( \WP_REST_Server::CREATABLE === $method ) {
-			return [];
+			return self::checkout( $request );
 		} else {
 			return new \WP_Error(
 				ErrorCodes::METHOD_ERROR,
@@ -60,20 +65,82 @@ class Checkout extends AbstractEndpoint
 	 */
 	public function endpoint_args() {
 		return [
-			'payment_method' => [
+			self::ORDER_ID_PARAM => [
 				'default' => false,
-				'required' => false,
-				'validate_callback' => function( $payment_method ) {
-					return false === $payment_method || ! is_string( $payment_method );
-				},
-			],
-			'order_id' => [
-				'default' => false,
-				'required' => false,
+				'required' => true,
 				'validate_callback' => function( $order_id ) {
-					return false === $order_id || ! intval( $order_id ) >= 0;
+					return intval( $order_id ) >= 0;
 				},
 			],
 		];
+	}
+
+	/**
+	 * Performs a checkout with the `First` active gateway available. Please, be sure
+	 * you have the desired gateway active and/or
+	 *
+	 * @param $request
+	 * @return array|\WP_Error
+	 */
+	public static function checkout( $request ) {
+		if ( ! $request->get_param( self::ORDER_ID_PARAM ) ) {
+			return new \WP_Error(
+				ErrorCodes::BAD_REQUEST,
+				'Invalid data, you need to provide an order_id and a payment gateway.',
+				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
+			);
+		}
+
+		$order_id = $request->get_param( self::ORDER_ID_PARAM );
+
+		$gateways = \WC()->payment_gateways()->payment_gateways();
+		$active = null;
+
+		foreach ( $gateways as $gateway ) {
+			if ( 'yes' === $gateway->settings['enabled'] ) {
+				$active = $gateway;
+			}
+		}
+
+		if ( ! isset( $active ) ) {
+			return new \WP_Error(
+				ErrorCodes::BAD_CONFIGURED,
+				'There is no active Gateway set in the Server Settings.',
+				[ 'status' => HttpCodes::HTTP_INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		// If the user is logged in, we can check if the $order_id is one of their own orders.
+		if ( is_user_logged_in() ) {
+			if ( ! self::is_user_order( $order_id ) ) {
+				return new \WP_Error(
+					ErrorCodes::BAD_CONFIGURED,
+					'This order does not belongs to the logged user.',
+					[ 'status' => HttpCodes::HTTP_FORBIDDEN ]
+				);
+			}
+		}
+
+		// If the order is ok, or if the user is a guest, we can proceed with the checkout.
+
+		do_action( Hooks::PRE_CHECKOUT, $order_id );
+
+		$payment = $active->process_payment( $order_id );
+		
+		do_action( Hooks::AFTER_CHECKOUT, $order_id );
+
+		return $payment;
+	}
+
+	public static function is_user_order( $order_id ) {
+		$orders = Order::get_user_orders();
+
+		foreach ( $orders as $order ) {
+			if ( $order_id === $order->id ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
