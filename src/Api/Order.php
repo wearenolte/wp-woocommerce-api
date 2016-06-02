@@ -107,7 +107,6 @@ class Order extends AbstractEndpoint
 
 		$cart = Cart::get_cart();
 
-
 		if ( $cart->is_empty() ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
@@ -122,7 +121,6 @@ class Order extends AbstractEndpoint
 		// Load our cart.
 		\WC()->cart = $cart;
 
-
 		$checkout = new \WC_Checkout();
 
 		// Get the Billing and Shipping required fields.
@@ -131,7 +129,6 @@ class Order extends AbstractEndpoint
 
 		$order_id = $checkout->create_order();
 		$order = new \WC_Order( $order_id );
-
 
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
 		if ( ! is_user_logged_in() ) {
@@ -149,7 +146,6 @@ class Order extends AbstractEndpoint
 		do_action( Hooks::AFTER_ORDER, $request, $order );
 
 		// Empty the current cart.
-
 		$cart->empty_cart();
 
 		return $order;
@@ -187,7 +183,6 @@ class Order extends AbstractEndpoint
 		$order->set_address( $params[ self::SHIPPING_KEY ], self::SHIPPING_KEY );
 		$order->set_address( $params[ self::BILLING_KEY ], self::BILLING_KEY );
 
-		
 		do_action( Hooks::GUEST_AFTER_UPDATE_ORDER, $request, $order );
 
 		return $order;
@@ -220,7 +215,6 @@ class Order extends AbstractEndpoint
 
 		$array_billing_match = [];
 		$array_shipping_match = [];
-
 
 		// We need to pre-process the parameter arrays, due to a difference between the field and the final database key.
 		foreach ( $params[ self::BILLING_KEY ] as $key => $value ) {

@@ -6,8 +6,8 @@ use Lean\Woocommerce\Utils\ErrorCodes;
 use Lean\Woocommerce\Utils\Hooks;
 
 /**
- * Class Checkout. 
- * 
+ * Class Checkout.
+ *
  * @package Lean\Woocommerce\Api
  */
 class Checkout extends AbstractEndpoint
@@ -78,7 +78,7 @@ class Checkout extends AbstractEndpoint
 	 * Performs a checkout with the `First` active gateway available. Please, be sure
 	 * you have the desired gateway active and/or
 	 *
-	 * @param $request
+	 * @param \WP_REST_Request $request Request object.
 	 * @return array|\WP_Error
 	 */
 	public static function checkout( $request ) {
@@ -119,26 +119,21 @@ class Checkout extends AbstractEndpoint
 				);
 			}
 		}
-
 		// If the order is ok, or if the user is a guest, we can proceed with the checkout.
-
 		do_action( Hooks::PRE_CHECKOUT, $order_id );
 
 		// Calculate totals of the order before doing the checkout.
-
 		$order = new \WC_Order( $order_id );
-		
 		$order->calculate_totals();
 
 		// Make the payment.
-
 		$payment = $active->process_payment( $order_id );
-		
+
 		do_action( Hooks::AFTER_CHECKOUT, $order_id );
 
-		if ( isset( $payment ) )
+		if ( isset( $payment ) ) {
 			return $payment;
-		else {
+		} else {
 			return new \WP_Error(
 				ErrorCodes::SERVER_ERROR,
 				'The payment could not be completed due to an error with the Payment Gateway.',
@@ -147,6 +142,12 @@ class Checkout extends AbstractEndpoint
 		}
 	}
 
+	/**
+	 * Check if the order belongs to the logged user.
+	 *
+	 * @param int $order_id The order id.
+	 * @return bool
+	 */
 	public static function is_user_order( $order_id ) {
 		$orders = Order::get_user_orders();
 
