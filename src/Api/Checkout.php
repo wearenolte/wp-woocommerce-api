@@ -4,7 +4,6 @@ use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
 use Lean\Woocommerce\Utils\Hooks;
-use Lean\Woocommerce\Api\Order;
 
 /**
  * Class Checkout. 
@@ -137,7 +136,15 @@ class Checkout extends AbstractEndpoint
 		
 		do_action( Hooks::AFTER_CHECKOUT, $order_id );
 
-		return $payment;
+		if ( isset( $payment ) )
+			return $payment;
+		else {
+			return new \WP_Error(
+				ErrorCodes::SERVER_ERROR,
+				'The payment could not be completed due to an error with the Payment Gateway.',
+				[ 'status' => HttpCodes::HTTP_INTERNAL_SERVER_ERROR ]
+			);
+		}
 	}
 
 	public static function is_user_order( $order_id ) {

@@ -26,6 +26,9 @@ the requirements for this request were not met. More information can be found in
 
 * `bad_permissions` - This means, the user does not have permissions to perform the desired action.
 
+* `internal_error` - This means, something went wrong in the Server but we don't have more information. Server logs
+and/or Woocommerce log should have more information about this.
+
 ### Hooks
 There are some actions you can use to add functionality to this plugin.
 

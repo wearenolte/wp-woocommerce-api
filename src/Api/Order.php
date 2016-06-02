@@ -149,6 +149,7 @@ class Order extends AbstractEndpoint
 		do_action( Hooks::AFTER_ORDER, $request, $order );
 
 		// Empty the current cart.
+
 		$cart->empty_cart();
 
 		return $order;
@@ -186,6 +187,7 @@ class Order extends AbstractEndpoint
 		$order->set_address( $params[ self::SHIPPING_KEY ], self::SHIPPING_KEY );
 		$order->set_address( $params[ self::BILLING_KEY ], self::BILLING_KEY );
 
+		
 		do_action( Hooks::GUEST_AFTER_UPDATE_ORDER, $request, $order );
 
 		return $order;
@@ -216,11 +218,25 @@ class Order extends AbstractEndpoint
 		$array_billing = array_flip( self::$billing_required_fields );
 		$array_shipping = array_flip( self::$shipping_required_fields );
 
-		if ( count( array_intersect_key( $params[ self::BILLING_KEY ], $array_billing ) ) < $required_billing ) {
+		$array_billing_match = [];
+		$array_shipping_match = [];
+
+
+		// We need to pre-process the parameter arrays, due to a difference between the field and the final database key.
+		foreach ( $params[ self::BILLING_KEY ] as $key => $value ) {
+			$array_billing_match[ self::BILLING_KEY . '_' . $key ] = $value;
+		}
+
+		foreach ( $params[ self::SHIPPING_KEY ] as $key => $value ) {
+			$array_shipping_match[ self::SHIPPING_KEY . '_' . $key ] = $value;
+		}
+
+		// Check if we have, at least, the required fields.
+		if ( count( array_intersect_key( $array_billing_match, $array_billing ) ) < $required_billing ) {
 			$errors += 1;
 		}
 
-		if ( count( array_intersect_key( $params[ self::SHIPPING_KEY ], $array_shipping ) ) < $required_shipping ) {
+		if ( count( array_intersect_key( $array_shipping_match, $array_shipping ) ) < $required_shipping ) {
 			$errors += 1;
 		}
 
