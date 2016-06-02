@@ -125,6 +125,15 @@ class Checkout extends AbstractEndpoint
 
 		do_action( Hooks::PRE_CHECKOUT, $order_id );
 
+		// Calculate totals of the order before doing the checkout.
+
+		$order = new \WC_Order();
+
+		$order->get_order( $order_id );
+		$order->calculate_totals();
+
+		// Make the payment.
+
 		$payment = $active->process_payment( $order_id );
 		
 		do_action( Hooks::AFTER_CHECKOUT, $order_id );

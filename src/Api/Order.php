@@ -107,6 +107,7 @@ class Order extends AbstractEndpoint
 
 		$cart = Cart::get_cart();
 
+
 		if ( $cart->is_empty() ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
@@ -114,11 +115,13 @@ class Order extends AbstractEndpoint
 				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
 			);
 		}
-
+		
+		$cart->calculate_totals();
 		do_action( Hooks::PRE_ORDER, $request, $cart );
 
 		// Load our cart.
 		\WC()->cart = $cart;
+
 
 		$checkout = new \WC_Checkout();
 
@@ -134,8 +137,14 @@ class Order extends AbstractEndpoint
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
 		if ( ! is_user_logged_in() ) {
 			$order = self::update_guest_order( $request, $order );
+			if ( is_wp_error( $order ) ) {
+				// Because we can have errors, delete the order and return the error.
+				wp_delete_post( $order_id );
+				return $order;
+			}
 		}
 
+		$order->get_total();
 		// Empty the current cart.
 		$cart->empty_cart();
 
@@ -154,7 +163,7 @@ class Order extends AbstractEndpoint
 
 		$params = $request->get_body_params();
 
-		if ( ! self::check_post_address( $params ) ) {
+		if ( self::check_post_address( $params ) ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
 				'Guest order needs billing and shipping information in POST body.',
@@ -197,6 +206,7 @@ class Order extends AbstractEndpoint
 	 */
 	public static function fields_have_errors( $params ) {
 		$errors = 0;
+
 		$required_billing = count( self::$billing_required_fields );
 		$required_shipping = count( self::$shipping_required_fields );
 

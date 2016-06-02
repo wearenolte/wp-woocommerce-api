@@ -54,7 +54,7 @@ $order;     // WC_Order Order instance.
 ```
 
 ##### ln_wc_pre_checkout
-Called before the payment is processed.
+Called before the payment is processed. You can use this hook to, for example, load some information on the $_POST object.
 ```php
 $order_id;     // int Order id.
 ```
