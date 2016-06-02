@@ -115,7 +115,7 @@ class Order extends AbstractEndpoint
 				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
 			);
 		}
-		
+
 		$cart->calculate_totals();
 		do_action( Hooks::PRE_ORDER, $request, $cart );
 
@@ -132,19 +132,22 @@ class Order extends AbstractEndpoint
 		$order_id = $checkout->create_order();
 		$order = new \WC_Order( $order_id );
 
-		do_action( Hooks::AFTER_ORDER, $request, $cart );
 
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
 		if ( ! is_user_logged_in() ) {
 			$order = self::update_guest_order( $request, $order );
+
 			if ( is_wp_error( $order ) ) {
-				// Because we can have errors, delete the order and return the error.
+				// Because we can have errors in $order, delete the order and return the error.
 				wp_delete_post( $order_id );
 				return $order;
 			}
 		}
 
 		$order->get_total();
+
+		do_action( Hooks::AFTER_ORDER, $request, $order );
+
 		// Empty the current cart.
 		$cart->empty_cart();
 
@@ -180,8 +183,8 @@ class Order extends AbstractEndpoint
 		}
 
 		// Update order with shipping and billing information for the Guest.
-		$order->set_address( $params['shipping'], self::SHIPPING_KEY );
-		$order->set_address( $params['billing'], self::BILLING_KEY );
+		$order->set_address( $params[ self::SHIPPING_KEY ], self::SHIPPING_KEY );
+		$order->set_address( $params[ self::BILLING_KEY ], self::BILLING_KEY );
 
 		do_action( Hooks::GUEST_AFTER_UPDATE_ORDER, $request, $order );
 

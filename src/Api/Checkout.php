@@ -127,9 +127,8 @@ class Checkout extends AbstractEndpoint
 
 		// Calculate totals of the order before doing the checkout.
 
-		$order = new \WC_Order();
-
-		$order->get_order( $order_id );
+		$order = new \WC_Order( $order_id );
+		
 		$order->calculate_totals();
 
 		// Make the payment.
