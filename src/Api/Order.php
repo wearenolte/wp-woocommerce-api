@@ -163,7 +163,7 @@ class Order extends AbstractEndpoint
 
 		$params = $request->get_body_params();
 
-		if ( self::check_post_address( $params ) ) {
+		if ( self::validate_address( $params ) ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
 				'Guest order needs billing and shipping information in POST body.',
@@ -194,7 +194,7 @@ class Order extends AbstractEndpoint
 	 * @param array	$params  Post body parameters.
 	 * @return bool
 	 */
-	public static function check_post_address( $params ) {
+	public static function validate_address($params ) {
 		return ! isset( $params[ self::SHIPPING_KEY ] ) || ! isset( $params[ self::BILLING_KEY ] );
 	}
 
