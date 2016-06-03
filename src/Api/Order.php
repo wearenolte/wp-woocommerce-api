@@ -135,7 +135,7 @@ class Order extends AbstractEndpoint {
 
 			if ( is_wp_error( $order ) ) {
 				// Because we can have errors in $order, delete the order and return the error.
-				if ( in_array( get_post( $order_id )->post_type, wc_get_order_types(), true ) ) {
+				if ( in_array( get_post_type( $order_id ), wc_get_order_types(), true ) ) {
 					wp_delete_post( $order_id );
 				}
 
