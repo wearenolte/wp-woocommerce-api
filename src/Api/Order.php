@@ -207,34 +207,30 @@ class Order extends AbstractEndpoint
 	public static function fields_have_errors( $params ) {
 		$errors = 0;
 
-		$required_billing = count( self::$billing_required_fields );
-		$required_shipping = count( self::$shipping_required_fields );
-
-		$array_billing = array_flip( self::$billing_required_fields );
-		$array_shipping = array_flip( self::$shipping_required_fields );
-
-		$array_billing_match = [];
-		$array_shipping_match = [];
-
-		// We need to pre-process the parameter arrays, due to a difference between the field and the final database key.
-		foreach ( $params[ self::BILLING_KEY ] as $key => $value ) {
-			$array_billing_match[ self::BILLING_KEY . '_' . $key ] = $value;
-		}
-
-		foreach ( $params[ self::SHIPPING_KEY ] as $key => $value ) {
-			$array_shipping_match[ self::SHIPPING_KEY . '_' . $key ] = $value;
-		}
-
-		// Check if we have, at least, the required fields.
-		if ( count( array_intersect_key( $array_billing_match, $array_billing ) ) < $required_billing ) {
-			$errors += 1;
-		}
-
-		if ( count( array_intersect_key( $array_shipping_match, $array_shipping ) ) < $required_shipping ) {
-			$errors += 1;
-		}
+		$errors += self::count_errors( $params[ self::BILLING_KEY ], self::$billing_required_fields, self::BILLING_KEY);
+		$errors += self::count_errors( $params[ self::SHIPPING_KEY ], self::$shipping_required_fields, self::SHIPPING_KEY);
 
 		return $errors;
+	}
+
+	/**
+	 * Helper function to count the number of different fields between two
+	 * arrays.
+	 *
+	 * @param array $keys Array with the keys from POST parameters.
+	 * @param array $required
+	 * @param string $used_key
+	 * @return int Number of errors.
+	 */
+	protected static function count_errors( $keys, $required, $used_key ) {
+		$flip = array_flip( $required );
+		$tmp = [];
+
+		foreach ( $keys as $key => $value ) {
+			$tmp[ $used_key . '_' . $key ] = $value;
+		}
+
+		return (int) ( count( array_intersect_key( $tmp, $flip ) ) < count( $required ) );
 	}
 
 	/**
