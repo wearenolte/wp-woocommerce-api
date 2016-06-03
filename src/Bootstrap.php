@@ -7,13 +7,13 @@ use Lean\Woocommerce\Api;
  *
  * @package Lean\Woocomerce\Modules
  */
-class Bootstrap
-{
+class Bootstrap {
 	/**
 	 * Init function.
 	 */
 	public static function init() {
 		Api\Cart::init();
 		Api\Order::init();
+		Api\Checkout::init();
 	}
 }

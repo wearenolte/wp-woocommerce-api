@@ -5,12 +5,11 @@ use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
 
 /**
- * Class CartEndpoint.
+ * Class Cart.
  *
  * @package Leean\Woocomerce\Modules\Cart
  */
-class Cart extends AbstractEndpoint
-{
+class Cart extends AbstractEndpoint {
 	/**
 	 * Endpoint path
 	 *
