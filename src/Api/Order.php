@@ -135,7 +135,7 @@ class Order extends AbstractEndpoint {
 
 			if ( is_wp_error( $order ) ) {
 				// Because we can have errors in $order, delete the order and return the error.
-				if ( in_array( get_post( $order_id )->post_type, wc_get_order_types() ) ) {
+				if ( in_array( get_post( $order_id )->post_type, wc_get_order_types(), true ) ) {
 					wp_delete_post( $order_id );
 				}
 
@@ -196,7 +196,7 @@ class Order extends AbstractEndpoint {
 	 * @param array	$params  Post body parameters.
 	 * @return bool
 	 */
-	public static function validate_address($params ) {
+	public static function validate_address( $params ) {
 		return ! isset( $params[ self::SHIPPING_KEY ] ) || ! isset( $params[ self::BILLING_KEY ] );
 	}
 
@@ -209,8 +209,8 @@ class Order extends AbstractEndpoint {
 	public static function fields_have_errors( $params ) {
 		$errors = 0;
 
-		$errors += self::count_errors( $params[ self::BILLING_KEY ], self::$billing_required_fields, self::BILLING_KEY);
-		$errors += self::count_errors( $params[ self::SHIPPING_KEY ], self::$shipping_required_fields, self::SHIPPING_KEY);
+		$errors += self::count_errors( $params[ self::BILLING_KEY ], self::$billing_required_fields, self::BILLING_KEY );
+		$errors += self::count_errors( $params[ self::SHIPPING_KEY ], self::$shipping_required_fields, self::SHIPPING_KEY );
 
 		return $errors;
 	}
@@ -219,9 +219,9 @@ class Order extends AbstractEndpoint {
 	 * Helper function to count the number of different fields between two
 	 * arrays.
 	 *
-	 * @param array $keys Array with the keys from POST parameters.
-	 * @param array $required
-	 * @param string $used_key
+	 * @param array  $keys Array with the keys from POST parameters.
+	 * @param array  $required Array with the required keys.
+	 * @param string $used_key Shipping/Billing key in each case.
 	 * @return int Number of errors.
 	 */
 	protected static function count_errors( $keys, $required, $used_key ) {
