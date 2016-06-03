@@ -9,8 +9,7 @@ use Lean\Woocommerce\Utils\ErrorCodes;
  *
  * @package Leean\Woocomerce\Modules\Cart
  */
-class Cart extends AbstractEndpoint
-{
+class Cart extends AbstractEndpoint {
 	/**
 	 * Endpoint path
 	 *

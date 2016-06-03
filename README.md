@@ -32,6 +32,7 @@ and/or Woocommerce log should have more information about this.
 ### Hooks
 There are some actions you can use to add functionality to this plugin.
 
+#### Actions:
 ##### ln_wc_pre_order
 Called before the order is created.
 
@@ -73,3 +74,5 @@ Called after the payment is processed.
 ```php
 $order_id;     // int Order id.
 ```
+
+#### Filters:

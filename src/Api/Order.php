@@ -12,8 +12,7 @@ use Lean\Woocommerce\Utils\Hooks;
  *
  * @package Lean\Woocommerce\Api
  */
-class Order extends AbstractEndpoint
-{
+class Order extends AbstractEndpoint {
 	const BILLING_KEY = 'billing';
 	const SHIPPING_KEY = 'shipping';
 

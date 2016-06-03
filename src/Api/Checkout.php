@@ -10,8 +10,7 @@ use Lean\Woocommerce\Utils\Hooks;
  *
  * @package Lean\Woocommerce\Api
  */
-class Checkout extends AbstractEndpoint
-{
+class Checkout extends AbstractEndpoint {
 
 	const ORDER_ID_PARAM = 'order_id';
 
