@@ -24,10 +24,10 @@ order passed as parameters.
 
 **Note:** Please read the following considerations.
 
-    1. The user has to be the owner of the order, or it should be a guest order.
-    2. The plugin will try the **first active** payment gateway configured in your WP dashboard.
-    3. More information can be required depending on the Gateway used. More information should be available
-     in the order panel of the dashboard if the payment fails.
+1. The user has to be the owner of the order, or it should be a guest order.
+2. The plugin will try the **first active** payment gateway configured in your WP dashboard.
+3. More information can be required depending on the Gateway used. More information should be available
+ in the order panel of the dashboard if the payment fails.
 
 ### Error codes
 The API can return some custom errors. You can find a explanation of
