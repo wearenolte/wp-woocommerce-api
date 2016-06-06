@@ -8,8 +8,26 @@ Version: 0.1.0
 ### Getting Started
 TODO
 
+---
 ### Endpoints
-TODO
+##### `/ecommerce/cart`
+`GET` - Get the current user's cart.
+`POST` - Add a product to the user's cart. `product_id` needs to be specified as an url parameter.
+
+##### `/ecommerce/order`
+`GET` - Get all logged users orders. If the user is not logged in, it returns nothing.
+`POST` - Create an order using the current user's cart. It returns the created order or an error.
+
+##### `/ecommerce/checkout`
+`POST` - It requires `order_id` parameter in URL. This endpoint tries to make the payment of the
+order passed as parameters. 
+
+**Note:** Please read the following considerations.
+
+    1. The user has to be the owner of the order, or it should be a guest order.
+    2. The plugin will try the **first active** payment gateway configured in your WP dashboard.
+    3. More information can be required depending on the Gateway used. More information should be available
+     in the order panel of the dashboard if the payment fails.
 
 ### Error codes
 The API can return some custom errors. You can find a explanation of

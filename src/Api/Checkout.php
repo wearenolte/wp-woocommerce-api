@@ -84,7 +84,7 @@ class Checkout extends AbstractEndpoint {
 		if ( ! $request->get_param( self::ORDER_ID_PARAM ) ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
-				'Invalid data, you need to provide an order_id and a payment gateway.',
+				'Invalid data, you need to provide an order_id.',
 				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
 			);
 		}
