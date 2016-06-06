@@ -1,5 +1,5 @@
 {
-  "name": "moxie-leean/woocommerce-api",
+  "name": "moxie-lean/woocommerce-api",
   "description": "Woocommerce API endpoints for Lean Ecosystem.",
   "type": "wordpress-plugin",
   "require": {
