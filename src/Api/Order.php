@@ -53,7 +53,7 @@ class Order extends AbstractEndpoint {
 			// Create an order.
 			return self::place_order( $request );
 		} else if ( \WP_REST_Server::READABLE === $method ) {
-			// Get all Logged User orders. Returns nothing if the user is not logged in.
+			// Get all Logged User orders. Returns empty array if the user is not logged in.
 			return self::get_user_orders();
 		} else {
 			return new \WP_Error(
