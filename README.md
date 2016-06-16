@@ -12,15 +12,18 @@ TODO
 ### Endpoints
 ##### `/ecommerce/cart`
 `GET` - Get the current user's cart.
+
 `POST` - Add a product to the user's cart. `product_id` needs to be specified as an url parameter.
 
 ##### `/ecommerce/order`
 `GET` - Get all logged users orders. If the user is not logged in, it returns an empty array.
+
 `POST` - Create an order using the current user's cart. It returns the created order or an error.
 
 ##### `/ecommerce/checkout`
 `POST` - It requires `order_id` parameter in URL. This endpoint tries to make the payment of the
 order passed as parameters. 
+
 
 **Note:** Please read the following considerations.
 
