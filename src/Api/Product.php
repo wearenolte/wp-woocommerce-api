@@ -72,7 +72,7 @@ class Product extends AbstractEndpoint {
 				$products[] = $controller->get_product( $product );
 			endwhile;
 		}
-		
+
 		wp_reset_postdata();
 
 		return $products;
