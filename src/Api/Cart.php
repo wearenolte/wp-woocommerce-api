@@ -71,6 +71,13 @@ class Cart extends AbstractEndpoint {
 					return false === $product_id || intval( $product_id ) >= 0;
 				},
 			],
+			'token_id' => [
+				'default' => false,
+				'required' => false,
+				'validate_callback' => function( $token_id ) {
+					return false === $token_id || is_string( $token_id );
+				},
+			],
 		];
 	}
 
