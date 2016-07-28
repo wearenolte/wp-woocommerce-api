@@ -24,6 +24,8 @@ TODO
 `POST` - It requires `order_id` parameter in URL. This endpoint tries to make the payment of the
 order passed as parameters. 
 
+##### `/ecommerce/products`
+`GET` - Get all the products in an array.
 
 **Note:** Please read the following considerations.
 
