@@ -3,6 +3,7 @@
 use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
+use Lean\Woocommerce\Controllers\ProductController;
 
 /**
  * Class Product.
@@ -63,14 +64,15 @@ class Product extends AbstractEndpoint {
 			'post_type' => 'product',
 		);
 		$loop = new \WP_Query( $args );
+		$controller = new ProductController();
 
 		if ( $loop->have_posts() ) {
 			while ( $loop->have_posts() ) : $loop->the_post();
-				$theid = get_the_ID();
-				$product = new \WC_Product($theid);
-				$products[] = $product->();
+				$product = new \WC_Product( get_the_ID() );
+				$products[] = $controller->get_product( $product );
 			endwhile;
 		}
+		
 		wp_reset_postdata();
 
 		return $products;
