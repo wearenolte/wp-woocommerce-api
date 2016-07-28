@@ -15,5 +15,6 @@ class Bootstrap {
 		Api\Cart::init();
 		Api\Order::init();
 		Api\Checkout::init();
+		Api\Product::init();
 	}
 }
