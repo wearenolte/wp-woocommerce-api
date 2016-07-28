@@ -108,6 +108,12 @@ class Cart extends AbstractEndpoint {
 		$cart = self::get_cart( $token_id );
 		$cart->add_to_cart( intval( $product_id ) );
 
+		if ( $token_id )  {
+			$user = UserController::get_user_by_token( $token_id );
+			update_user_meta($user->ID, self::CART_USER_META, $cart);
+		}
+
+
 		return $cart;
 	}
 
