@@ -7,7 +7,7 @@ use Lean\Woocommerce\Utils\ErrorCodes;
 /**
  * Class Product.
  *
- * @package Leean\Woocomerce\Modules\Cart
+ * @package Leean\Woocomerce\Modules\Product
  */
 class Product extends AbstractEndpoint {
 	/**
@@ -58,8 +58,21 @@ class Product extends AbstractEndpoint {
 	 * @return array
 	 */
 	public static function get_products() {
-		\WC()->cart->get_cart_from_session();
+		$products = [];
+		$args = array(
+			'post_type' => 'product',
+		);
+		$loop = new \WP_Query( $args );
 
-		return \WC()->cart;
+		if ( $loop->have_posts() ) {
+			while ( $loop->have_posts() ) : $loop->the_post();
+				$theid = get_the_ID();
+				$product = new \WC_Product($theid);
+				$products[] = $product->();
+			endwhile;
+		}
+		wp_reset_postdata();
+
+		return $products;
 	}
 }
