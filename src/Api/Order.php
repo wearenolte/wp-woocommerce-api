@@ -4,6 +4,7 @@ use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
 use Lean\Woocommerce\Utils\Hooks;
+use Lean\Woocommerce\Controllers\UserController;
 
 /**
  * Class Order. This class implements the order endpoints. Users are able
@@ -84,11 +85,11 @@ class Order extends AbstractEndpoint {
 	 */
 	public function endpoint_args() {
 		return [
-			'product_id' => [
+			'token_id' => [
 				'default' => false,
 				'required' => false,
-				'validate_callback' => function( $order_id ) {
-					return false === $order_id || intval( $order_id ) >= 0;
+				'validate_callback' => function( $token_id ) {
+					return false === $token_id || is_string( $token_id );
 				},
 			],
 		];
@@ -103,8 +104,8 @@ class Order extends AbstractEndpoint {
 	 * @return array Order.
 	 */
 	public static function place_order( \WP_REST_Request $request ) {
-
-		$cart = Cart::get_cart();
+		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
+		$cart = Cart::get_cart( $token_id );
 
 		if ( $cart->is_empty() ) {
 			return new \WP_Error(
@@ -120,17 +121,29 @@ class Order extends AbstractEndpoint {
 		// Load our cart.
 		\WC()->cart = $cart;
 
+
 		$checkout = new \WC_Checkout();
+		
 
 		// Get the Billing and Shipping required fields.
 		self::$billing_required_fields = array_keys( $checkout->checkout_fields[ self::BILLING_KEY ] );
 		self::$shipping_required_fields = array_keys( $checkout->checkout_fields[ self::SHIPPING_KEY ] );
 
 		$order_id = $checkout->create_order();
+
+		if ( $token_id ) {
+			$user = UserController::get_user_by_token( $token_id );
+			wc_create_order([
+				'order_id' => $order_id,
+				'customer_id' => $user->ID
+			]);
+		}
+
 		$order = new \WC_Order( $order_id );
 
 		// If the user is not logged in, we need to pass the billing and shipping address to the order.
-		if ( ! is_user_logged_in() ) {
+		// Also is a guest if token_id is false.
+		if ( ! is_user_logged_in() && ! $token_id ) {
 			$order = self::update_guest_order( $request, $order );
 
 			if ( is_wp_error( $order ) ) {
