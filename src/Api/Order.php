@@ -55,7 +55,7 @@ class Order extends AbstractEndpoint {
 			return self::place_order( $request );
 		} else if ( \WP_REST_Server::READABLE === $method ) {
 			// Get all Logged User orders. Returns empty array if the user is not logged in.
-			return self::get_user_orders();
+			return self::get_user_orders( $request );
 		} else {
 			return new \WP_Error(
 				ErrorCodes::METHOD_ERROR,
@@ -251,14 +251,24 @@ class Order extends AbstractEndpoint {
 	/**
 	 * Return all logged user orders. If the user is not logged_in returns an empty array.
 	 *
+	 * @param \WP_REST_Request $request Request object.
 	 * @return array Orders|Empty array.
 	 */
-	public static function get_user_orders() {
-		if ( is_user_logged_in() ) {
+	public static function get_user_orders( $request ) {
+		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
+
+		if ( is_user_logged_in() || $token_id ) {
+			if ( is_user_logged_in() ) {
+				$user_id = get_current_user_id();
+			} else {
+				$user = UserController::get_user_by_token( $token_id );
+				$user_id = $user->ID;
+			}
+
 			$customer_orders = get_posts( array(
 				'posts_per_page'	=> self::ORDERS_PER_PAGE,
 				'meta_key'    		=> '_customer_user',
-				'meta_value'  		=> get_current_user_id(),
+				'meta_value'  		=> $user_id,
 				'post_type'   		=> wc_get_order_types(),
 				'post_status' 		=> array_keys( wc_get_order_statuses() ),
 			) );
