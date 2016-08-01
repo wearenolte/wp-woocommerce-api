@@ -22,7 +22,7 @@ class UserController {
 				'meta_key' => self::USER_TOKEN,
 				'meta_value' => $token_id,
 				'number' => 1,
-				'count_total' => false
+				'count_total' => false,
 			)
 		);
 

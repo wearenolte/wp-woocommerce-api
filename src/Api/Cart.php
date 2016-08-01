@@ -108,11 +108,10 @@ class Cart extends AbstractEndpoint {
 		$cart = self::get_cart( $token_id );
 		$cart->add_to_cart( intval( $product_id ) );
 
-		if ( $token_id )  {
+		if ( $token_id ) {
 			$user = UserController::get_user_by_token( $token_id );
-			update_user_meta($user->ID, self::CART_USER_META, $cart);
+			update_user_meta( $user->ID, self::CART_USER_META, $cart );
 		}
-
 
 		return $cart;
 	}
@@ -128,7 +127,7 @@ class Cart extends AbstractEndpoint {
 		if ( $token_id ) {
 
 			$user = UserController::get_user_by_token( $token_id );
-			
+
 			if ( isset( $user->ID ) ) {
 				$cart = get_user_meta( $user->ID, self::CART_USER_META, true );
 
@@ -136,14 +135,13 @@ class Cart extends AbstractEndpoint {
 					return $cart;
 				} else {
 					$cart = new \WC_Cart();
-					update_user_meta($user->ID, self::CART_USER_META, $cart);
+					update_user_meta( $user->ID, self::CART_USER_META, $cart );
 					return $cart;
 				}
 			}
 		}
 
 		// Else, we use the session cart.
-
 		\WC()->cart->get_cart_from_session();
 
 		return \WC()->cart;

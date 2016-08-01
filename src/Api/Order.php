@@ -121,9 +121,7 @@ class Order extends AbstractEndpoint {
 		// Load our cart.
 		\WC()->cart = $cart;
 
-
 		$checkout = new \WC_Checkout();
-		
 
 		// Get the Billing and Shipping required fields.
 		self::$billing_required_fields = array_keys( $checkout->checkout_fields[ self::BILLING_KEY ] );
@@ -135,7 +133,7 @@ class Order extends AbstractEndpoint {
 			$user = UserController::get_user_by_token( $token_id );
 			wc_create_order([
 				'order_id' => $order_id,
-				'customer_id' => $user->ID
+				'customer_id' => $user->ID,
 			]);
 		}
 

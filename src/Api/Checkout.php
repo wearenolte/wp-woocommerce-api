@@ -152,14 +152,15 @@ class Checkout extends AbstractEndpoint {
 	/**
 	 * Check if the order belongs to the logged user.
 	 *
-	 * @param int $order_id The order id.
+	 * @param int 			   $order_id The order id.
+	 * @param \WP_REST_Request $request The request.
 	 * @return bool
 	 */
 	public static function is_user_order( $order_id, $request ) {
 		$orders = Order::get_user_orders( $request );
 
 		foreach ( $orders as $order ) {
-			if ( (int)$order_id === (int)$order->ID ) {
+			if ( (int) $order_id === (int) $order->ID ) {
 				return true;
 			}
 		}
