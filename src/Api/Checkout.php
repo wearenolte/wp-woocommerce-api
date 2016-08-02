@@ -4,6 +4,7 @@ use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
 use Lean\Woocommerce\Utils\Hooks;
+use Lean\Woocommerce\Controllers\UserController;
 
 /**
  * Class Checkout.
@@ -70,6 +71,13 @@ class Checkout extends AbstractEndpoint {
 					return intval( $order_id ) >= 0;
 				},
 			],
+			'token_id' => [
+				'default' => false,
+				'required' => false,
+				'validate_callback' => function( $token_id ) {
+					return false === $token_id || is_string( $token_id );
+				},
+			],
 		];
 	}
 
@@ -88,7 +96,7 @@ class Checkout extends AbstractEndpoint {
 				[ 'status' => HttpCodes::HTTP_BAD_REQUEST ]
 			);
 		}
-
+		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
 		$order_id = $request->get_param( self::ORDER_ID_PARAM );
 
 		$gateways = \WC()->payment_gateways()->payment_gateways();
@@ -109,8 +117,8 @@ class Checkout extends AbstractEndpoint {
 		}
 
 		// If the user is logged in, we can check if the $order_id is one of their own orders.
-		if ( is_user_logged_in() ) {
-			if ( ! self::is_user_order( $order_id ) ) {
+		if ( is_user_logged_in() || $token_id ) {
+			if ( ! self::is_user_order( $order_id, $request ) ) {
 				return new \WP_Error(
 					ErrorCodes::BAD_CONFIGURED,
 					'This order does not belongs to the logged user.',
@@ -144,14 +152,15 @@ class Checkout extends AbstractEndpoint {
 	/**
 	 * Check if the order belongs to the logged user.
 	 *
-	 * @param int $order_id The order id.
+	 * @param int 			   $order_id The order id.
+	 * @param \WP_REST_Request $request The request.
 	 * @return bool
 	 */
-	public static function is_user_order( $order_id ) {
-		$orders = Order::get_user_orders();
+	public static function is_user_order( $order_id, $request ) {
+		$orders = Order::get_user_orders( $request );
 
 		foreach ( $orders as $order ) {
-			if ( $order_id === $order->id ) {
+			if ( (int) $order_id === (int) $order->ID ) {
 				return true;
 			}
 		}
