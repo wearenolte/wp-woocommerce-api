@@ -97,6 +97,8 @@ class Cart extends AbstractEndpoint {
 		$product_id = $request->get_param( 'product_id' );
 		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
 
+
+
 		if ( ! $product_id ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
@@ -106,6 +108,7 @@ class Cart extends AbstractEndpoint {
 		}
 
 		$cart = self::get_cart( $token_id );
+		$cart->empty_cart();
 		$cart->add_to_cart( intval( $product_id ) );
 
 		if ( $token_id ) {
@@ -120,7 +123,7 @@ class Cart extends AbstractEndpoint {
 	 * Get the cart for the current session user.
 	 *
 	 * @param bool|string $token_id Token id.
-	 * @return array
+	 * @return \WC_Cart
 	 */
 	public static function get_cart( $token_id = false ) {
 		// If we have a token_id that means the request is made from a mobile app.
