@@ -106,8 +106,17 @@ class Cart extends AbstractEndpoint {
 		}
 
 		$cart = self::get_cart( $token_id );
-		$cart->empty_cart();
-		$cart->add_to_cart( intval( $product_id ) );
+		// TODO add quantity parameter to the endpoint
+
+		// If this is a variation of a product instead of a simple one, we need to prepare the data.
+		if ( 'product_variation' == get_post_type( $product_id ) ) {
+			$variation = wc_get_product( $product_id );
+			$variation_id = $product_id;
+			$product_id   = wp_get_post_parent_id( $variation_id );
+			$cart->add_to_cart( $product_id, 1, intval( $variation_id ) , (array) $variation->variation_data );
+		} else {
+			$cart->add_to_cart( $product_id );
+		}
 
 		if ( $token_id ) {
 			$user = UserController::get_user_by_token( $token_id );
