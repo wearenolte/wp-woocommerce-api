@@ -97,8 +97,6 @@ class Cart extends AbstractEndpoint {
 		$product_id = $request->get_param( 'product_id' );
 		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
 
-
-
 		if ( ! $product_id ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
@@ -113,7 +111,11 @@ class Cart extends AbstractEndpoint {
 
 		if ( $token_id ) {
 			$user = UserController::get_user_by_token( $token_id );
-			update_user_meta( $user->ID, self::CART_USER_META, $cart );
+
+			if ( $user ) {
+				update_user_meta( $user->ID, self::CART_USER_META, $cart );
+			}
+
 		}
 
 		return $cart;

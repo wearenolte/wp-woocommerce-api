@@ -26,6 +26,6 @@ class UserController {
 			)
 		);
 
-		return $user[0];
+		return ! empty( $user ) ? $user[0] : 0;
 	}
 }
