@@ -106,11 +106,23 @@ class Cart extends AbstractEndpoint {
 		}
 
 		$cart = self::get_cart( $token_id );
-		$cart->add_to_cart( intval( $product_id ) );
+		// TODO add quantity parameter to the endpoint.
+		// If this is a variation of a product instead of a simple one, we need to prepare the data.
+		if ( 'product_variation' === get_post_type( $product_id ) ) {
+			$variation = wc_get_product( $product_id );
+			$variation_id = $product_id;
+			$product_id   = wp_get_post_parent_id( $variation_id );
+			$cart->add_to_cart( $product_id, 1, intval( $variation_id ) , (array) $variation->variation_data );
+		} else {
+			$cart->add_to_cart( $product_id );
+		}
 
 		if ( $token_id ) {
 			$user = UserController::get_user_by_token( $token_id );
-			update_user_meta( $user->ID, self::CART_USER_META, $cart );
+
+			if ( $user ) {
+				update_user_meta( $user->ID, self::CART_USER_META, $cart );
+			}
 		}
 
 		return $cart;
@@ -120,7 +132,7 @@ class Cart extends AbstractEndpoint {
 	 * Get the cart for the current session user.
 	 *
 	 * @param bool|string $token_id Token id.
-	 * @return array
+	 * @return \WC_Cart
 	 */
 	public static function get_cart( $token_id = false ) {
 		// If we have a token_id that means the request is made from a mobile app.
