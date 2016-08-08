@@ -174,7 +174,9 @@ class Order extends AbstractEndpoint {
 	public static function update_guest_order( \WP_REST_Request $request, $order ) {
 		do_action( Hooks::GUEST_PRE_UPDATE_ORDER, $request, $order );
 
-		$params = $request->get_body_params();
+		$params = $request->get_body();
+
+		$params = json_decode( $params, true );
 
 		if ( self::validate_address( $params ) ) {
 			return new \WP_Error(
