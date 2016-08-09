@@ -293,7 +293,7 @@ class Order extends AbstractEndpoint {
 			$new_order->calculate_totals();
 			$new_order->total = $new_order->get_total();
 
-			// Add custom values to the filter if needed.
+			// Add custom values to the order if needed.
 			$new_order = apply_filters( Hooks::FORMAT_ORDER_FILTER, $new_order );
 
 			$response[] = $new_order;
