@@ -55,7 +55,7 @@ class Order extends AbstractEndpoint {
 			return self::place_order( $request );
 		} else if ( \WP_REST_Server::READABLE === $method ) {
 			// Get all Logged User orders. Returns empty array if the user is not logged in.
-			return self::get_user_orders( $request );
+			return self::format_orders( self::get_user_orders( $request ) );
 		} else {
 			return new \WP_Error(
 				ErrorCodes::METHOD_ERROR,
@@ -277,5 +277,28 @@ class Order extends AbstractEndpoint {
 		}
 
 		return [];
+	}
+
+	/**
+	 * Format orders after getting them.
+	 *
+	 * @param array $orders The orders.
+	 * @return array Orders formatted.
+	 */
+	public static function format_orders( $orders ) {
+		$response = [];
+
+		foreach ( $orders as $order ) {
+			$new_order = new \WC_Order( $order->ID );
+			$new_order->calculate_totals();
+			$new_order->total = $new_order->get_total();
+
+			// Add custom values to the order if needed.
+			$new_order = apply_filters( Hooks::FORMAT_ORDER_FILTER, $new_order );
+
+			$response[] = $new_order;
+		}
+
+		return $response;
 	}
 }
