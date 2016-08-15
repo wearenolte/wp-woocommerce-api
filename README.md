@@ -15,6 +15,8 @@ TODO
 
 `POST` - Add a product to the user's cart. `product_id` needs to be specified as an url parameter.
 
+`POST` - Delete a product from the dart. `delete` = true and `item_key` must be specified as an url parameter.
+
 ##### `/ecommerce/order`
 `GET` - Get all logged users orders. If the user is not logged in, it returns an empty array.
 
