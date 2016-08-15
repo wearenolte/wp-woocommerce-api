@@ -36,13 +36,9 @@ class Cart extends AbstractEndpoint {
 			$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
 			return self::get_cart( $token_id );
 		} else if ( in_array( $method, str_getcsv( \WP_REST_Server::EDITABLE ), true ) ) {
-			$delete = $request->get_param( 'delete' ) ? $request->get_param( 'delete' ) : false;
-			// Choose if we are deleting a product or adding it to the current cart.
-			if ( true === $delete ) {
-				return self::delete_from_cart( $request );
-			} else {
-				return self::add_to_cart( $request );
-			}
+			return self::add_to_cart( $request );
+		} else if ( \WP_REST_Server::DELETABLE === $method ) {
+			return self::delete_from_cart( $request );
 		} else {
 			return new \WP_Error(
 				ErrorCodes::METHOD_ERROR,
@@ -60,7 +56,7 @@ class Cart extends AbstractEndpoint {
 	protected function endpoint_options() {
 		return [
 			'methods' => array_merge(
-				[ \WP_REST_Server::READABLE ],
+				[ \WP_REST_Server::READABLE, \WP_REST_Server::DELETABLE ],
 				str_getcsv( \WP_REST_Server::EDITABLE )
 			),
 			'callback' => [ $this, 'endpoint_callback' ],
@@ -94,13 +90,6 @@ class Cart extends AbstractEndpoint {
 				'required' => false,
 				'validate_callback' => function( $item_key ) {
 					return false === $item_key || is_string( $item_key );
-				},
-			],
-			'delete' => [
-				'default' => false,
-				'required' => false,
-				'validate_callback' => function ( $delete ) {
-					return false === $delete || true;
 				},
 			],
 		];
