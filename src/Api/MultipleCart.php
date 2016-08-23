@@ -13,9 +13,6 @@ use Lean\Woocommerce\Utils\Hooks;
  * @package Leean\Woocomerce\Modules\Cart
  */
 class MultipleCart extends AbstractEndpoint {
-	
-	const TRANSIENT_DATA_KEY = 'ln_wc_cart_data_';
-	
 	/**
 	 * Endpoint path
 	 *
