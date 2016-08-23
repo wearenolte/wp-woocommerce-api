@@ -64,9 +64,7 @@ class MultipleCart extends AbstractEndpoint {
 	public static function add_to_cart( \WP_REST_Request $request ) {
 		$params = $request->get_json_params();
 
-		error_log(print_r($params, true));
-
-		if ( ! is_array( $params ) || empty ( $params ) ) {
+		if ( ! is_array( $params ) || empty( $params ) ) {
 			return new \WP_Error(
 				ErrorCodes::BAD_REQUEST,
 				'Invalid data, array of objects expected.',
@@ -98,7 +96,7 @@ class MultipleCart extends AbstractEndpoint {
 	 * @return bool|\WP_Error
 	 */
 	public static function validate_params( $params ) {
-		foreach ($params as $param) {
+		foreach ( $params as $param ) {
 			if ( ! isset( $param['product_id'] ) ) {
 				return new \WP_Error(
 					ErrorCodes::BAD_REQUEST,

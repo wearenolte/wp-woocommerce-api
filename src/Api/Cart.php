@@ -167,8 +167,8 @@ class Cart extends AbstractEndpoint {
 	 * Add a product by ID.
 	 *
 	 * @param \WC_Cart $cart  The cart.
-	 * @param int $product_id Product ID.
-	 * @param int $quantity   Quantity of products.
+	 * @param int      $product_id Product ID.
+	 * @param int      $quantity   Quantity of products.
 	 * @return \Wc_Cart
 	 */
 	public static function add_product_by_id( $cart, $product_id, $quantity = 1 ) {
