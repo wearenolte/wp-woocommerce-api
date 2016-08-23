@@ -16,5 +16,6 @@ class Bootstrap {
 		Api\Order::init();
 		Api\Checkout::init();
 		Api\Product::init();
+		Api\MultipleCart::init();
 	}
 }
