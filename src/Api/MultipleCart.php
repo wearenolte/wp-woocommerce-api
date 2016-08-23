@@ -5,6 +5,7 @@ use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
 use Lean\Woocommerce\Controllers\UserController;
 use Lean\Woocommerce\Api\Cart;
+use Lean\Woocommerce\Utils\Hooks;
 
 /**
  * Class Cart.
@@ -12,6 +13,9 @@ use Lean\Woocommerce\Api\Cart;
  * @package Leean\Woocomerce\Modules\Cart
  */
 class MultipleCart extends AbstractEndpoint {
+	
+	const TRANSIENT_DATA_KEY = 'ln_wc_cart_data_';
+	
 	/**
 	 * Endpoint path
 	 *
@@ -81,10 +85,14 @@ class MultipleCart extends AbstractEndpoint {
 		$cart_class = new Cart();
 		$cart = $cart_class::get_cart();
 
+		do_action( Hooks::PRE_MULTIPLE_CART_ITEMS, $cart, $request );
+
 		foreach ( $params as $product ) {
 			$quantity = isset( $product['quantity'] ) ? $product['quantity'] : 1;
 			$cart = $cart_class::add_product_by_id( $cart, $product['product_id'], $quantity );
 		}
+
+		do_action( Hooks::AFTER_MULTIPLE_CART_ITEMS, $cart, $request );
 
 		return $cart;
 	}
