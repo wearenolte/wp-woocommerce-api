@@ -171,7 +171,7 @@ class Cart extends AbstractEndpoint {
 	 * @param int $quantity   Quantity of products.
 	 * @return \Wc_Cart
 	 */
-	function add_product_by_id( $cart, $product_id, $quantity = 1 ) {
+	public static function add_product_by_id( $cart, $product_id, $quantity = 1 ) {
 		// If this is a variation of a product instead of a simple one, we need to prepare the data.
 		if ( 'product_variation' === get_post_type( $product_id ) ) {
 			$variation = wc_get_product( $product_id );
