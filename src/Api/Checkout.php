@@ -127,7 +127,7 @@ class Checkout extends AbstractEndpoint {
 			}
 		}
 		// If the order is ok, or if the user is a guest, we can proceed with the checkout.
-		do_action( Hooks::PRE_CHECKOUT, $order_id );
+		do_action( Hooks::PRE_CHECKOUT, $order_id, $request );
 
 		// Calculate totals of the order before doing the checkout.
 		$order = new \WC_Order( $order_id );
@@ -136,7 +136,7 @@ class Checkout extends AbstractEndpoint {
 		// Make the payment.
 		$payment = $active->process_payment( $order_id );
 
-		do_action( Hooks::AFTER_CHECKOUT, $order_id );
+		do_action( Hooks::AFTER_CHECKOUT, $order_id, $request );
 
 		if ( isset( $payment ) ) {
 			return $payment;
