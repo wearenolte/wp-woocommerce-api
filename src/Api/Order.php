@@ -156,7 +156,7 @@ class Order extends AbstractEndpoint {
 
 		$order->get_total();
 
-		do_action( Hooks::AFTER_ORDER, $request, $order );
+		do_action( Hooks::AFTER_ORDER, $request, $order, $cart );
 
 		// Empty the current cart.
 		$cart->empty_cart();
