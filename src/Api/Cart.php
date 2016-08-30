@@ -116,6 +116,8 @@ class Cart extends AbstractEndpoint {
 
 		$cart = self::get_cart( $token_id );
 
+		$cart->remove_cart_item( $product_key );
+
 		if ( $token_id ) {
 			$user = UserController::get_user_by_token( $token_id );
 
@@ -123,8 +125,6 @@ class Cart extends AbstractEndpoint {
 				update_user_meta( $user->ID, self::CART_USER_META, $cart );
 			}
 		}
-
-		$cart->remove_cart_item( $product_key );
 
 		return $cart;
 	}
