@@ -3,6 +3,7 @@
 use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
+use Lean\Woocommerce\Utils\Hooks;
 use Lean\Woocommerce\Controllers\UserController;
 
 /**
@@ -169,17 +170,23 @@ class Cart extends AbstractEndpoint {
 	 * @param \WC_Cart $cart  The cart.
 	 * @param int      $product_id Product ID.
 	 * @param int      $quantity   Quantity of products.
+	 * @param array	   $cart_item_data Custom data for the item.
+	 * @param bool	   $key If True, return array instead of cart.
 	 * @return \Wc_Cart
 	 */
-	public static function add_product_by_id( $cart, $product_id, $quantity = 1 ) {
+	public static function add_product_by_id( $cart, $product_id, $quantity = 1, $cart_item_data = [], $key = false ) {
 		// If this is a variation of a product instead of a simple one, we need to prepare the data.
 		if ( 'product_variation' === get_post_type( $product_id ) ) {
 			$variation = wc_get_product( $product_id );
 			$variation_id = $product_id;
 			$product_id   = wp_get_post_parent_id( $variation_id );
-			$cart->add_to_cart( $product_id, intval( $quantity ), intval( $variation_id ) , (array) $variation->variation_data );
+			$item_key = $cart->add_to_cart( $product_id, intval( $quantity ), intval( $variation_id ) , (array) $variation->variation_data );
 		} else {
-			$cart->add_to_cart( $product_id, intval( $quantity ) );
+			$item_key = $cart->add_to_cart( $product_id, intval( $quantity ), 0, [], $cart_item_data );
+		}
+
+		if ( $key ) {
+			return $item_key;
 		}
 
 		return $cart;
