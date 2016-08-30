@@ -3,7 +3,6 @@
 use Lean\AbstractEndpoint;
 use Epoch2\HttpCodes;
 use Lean\Woocommerce\Utils\ErrorCodes;
-use Lean\Woocommerce\Utils\Hooks;
 use Lean\Woocommerce\Controllers\UserController;
 
 /**
