@@ -139,19 +139,15 @@ class Order extends AbstractEndpoint {
 
 		$order = new \WC_Order( $order_id );
 
-		// If the user is not logged in, we need to pass the billing and shipping address to the order.
-		// Also is a guest if token_id is false.
-		if ( ! is_user_logged_in() && ! $token_id ) {
-			$order = self::update_guest_order( $request, $order );
+		$order = self::update_guest_order( $request, $order );
 
-			if ( is_wp_error( $order ) ) {
-				// Because we can have errors in $order, delete the order and return the error.
-				if ( in_array( get_post_type( $order_id ), wc_get_order_types(), true ) ) {
-					wp_delete_post( $order_id );
-				}
-
-				return $order;
+		if ( is_wp_error( $order ) ) {
+			// Because we can have errors in $order, delete the order and return the error.
+			if ( in_array( get_post_type( $order_id ), wc_get_order_types(), true ) ) {
+				wp_delete_post( $order_id );
 			}
+
+			return $order;
 		}
 
 		$order->get_total();
