@@ -64,6 +64,7 @@ class MultipleCart extends AbstractEndpoint {
 	 */
 	public static function add_to_cart( \WP_REST_Request $request ) {
 		$params = $request->get_json_params();
+		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
 
 		if ( ! is_array( $params ) || empty( $params ) ) {
 			return new \WP_Error(
@@ -82,11 +83,27 @@ class MultipleCart extends AbstractEndpoint {
 		$cart_class = new Cart();
 		$cart = $cart_class::get_cart();
 
+		if ( $token_id ) {
+			$user = UserController::get_user_by_token( $token_id );
+
+			if ( $user ) {
+				$cart = get_user_meta( $user->ID, Cart::CART_USER_META, true );
+			}
+		}
+
 		do_action( Hooks::PRE_MULTIPLE_CART_ITEMS, $cart, $request );
 
 		foreach ( $params as $product ) {
 			$quantity = isset( $product['quantity'] ) ? $product['quantity'] : 1;
 			$cart = $cart_class::add_product_by_id( $cart, $product['product_id'], $quantity );
+		}
+
+		if ( $token_id ) {
+			$user = UserController::get_user_by_token( $token_id );
+
+			if ( $user ) {
+				update_user_meta( $user->ID, Cart::CART_USER_META, $cart );
+			}
 		}
 
 		do_action( Hooks::AFTER_MULTIPLE_CART_ITEMS, $cart, $request );
