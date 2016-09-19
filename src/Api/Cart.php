@@ -221,4 +221,22 @@ class Cart extends AbstractEndpoint {
 
 		return \WC()->cart;
 	}
+
+	/**
+	 * Empty the current cart.
+	 *
+	 * @param bool|string $token_id The token.
+	 */
+	public static function empty_cart( $token_id = false ) {
+		$cart = self::get_cart( $token_id );
+
+		if ( $token_id ) {
+			$user = UserController::get_user_by_token( $token_id );
+			if ( isset( $user->ID ) ) {
+				delete_user_meta( $user->ID, self::CART_USER_META, $cart );
+			}
+		}
+
+		$cart->empty_cart( true );
+	}
 }

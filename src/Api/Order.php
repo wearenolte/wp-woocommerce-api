@@ -118,9 +118,6 @@ class Order extends AbstractEndpoint {
 		$cart->calculate_totals();
 		do_action( Hooks::PRE_ORDER, $request, $cart );
 
-		// Load our cart.
-		\WC()->cart = $cart;
-
 		$checkout = new \WC_Checkout();
 
 		// Get the Billing and Shipping required fields.
@@ -156,6 +153,10 @@ class Order extends AbstractEndpoint {
 
 		// Empty the current cart.
 		$cart->empty_cart();
+
+		if ( $token_id ) {
+			Cart::empty_cart( $token_id );
+		}
 
 		return $order;
 	}
