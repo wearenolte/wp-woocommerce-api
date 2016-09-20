@@ -54,7 +54,7 @@ class Order extends AbstractEndpoint {
 			// Create an order.
 			return self::place_order( $request );
 		} else if ( \WP_REST_Server::READABLE === $method ) {
-			// Get all Logged User orders. Returns empty array if the user is not logged in.
+			// Get all User by email or token. Returns empty array if the user is not found.
 			return self::format_orders( self::get_user_orders( $request ) );
 		} else {
 			return new \WP_Error(
@@ -92,6 +92,13 @@ class Order extends AbstractEndpoint {
 					return false === $token_id || is_string( $token_id );
 				},
 			],
+			'user_email' => [
+				'default' => '',
+				'required' => false,
+				'validate_callback' => function( $user_email ) {
+					 return empty( $user_email ) || filter_var( $user_email, FILTER_VALIDATE_EMAIL );
+				},
+			],
 		];
 	}
 
@@ -105,6 +112,7 @@ class Order extends AbstractEndpoint {
 	 */
 	public static function place_order( \WP_REST_Request $request ) {
 		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
+		$user_email = trim( $request->get_param( 'user_email' ) );
 		$cart = Cart::get_cart( $token_id );
 
 		if ( $cart->is_empty() ) {
@@ -129,11 +137,16 @@ class Order extends AbstractEndpoint {
 
 		$order_id = $checkout->create_order();
 
-		if ( $token_id ) {
-			$user = UserController::get_user_by_token( $token_id );
+		if ( $token_id || $user_email ) {
+			if ( $token_id ) {
+				$user = UserController::get_user_by_token( $token_id );
+			} else {
+				$user = get_user_by( 'email', $user_email );
+			}
 			wc_create_order([
 				'order_id' => $order_id,
-				'customer_id' => $user->ID,
+				// $user is not always going to be an object it can be zero.
+				'customer_id' => 0 === $user ? $user : $user->ID,
 			]);
 		}
 
@@ -161,7 +174,8 @@ class Order extends AbstractEndpoint {
 	}
 
 	/**
-	 * If the user is not logged in, we need the shipping and billing info in order to create the shop order.
+	 * If the user is not logged in, we need the shipping and billing info
+	 * in order to create the shop order.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @param \WC_Order 	   $order Order.
@@ -245,22 +259,31 @@ class Order extends AbstractEndpoint {
 	}
 
 	/**
-	 * Return all logged user orders. If the user is not logged_in returns an empty array.
+	 * Return all user orders by email or token ID. If the user email or token
+	 * is not specified returns an empty array.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @return array Orders|Empty array.
 	 */
 	public static function get_user_orders( $request ) {
-		$token_id = $request->get_param( 'token_id' ) ? $request->get_param( 'token_id' ) : false;
+		$token_id = $request->get_param( 'token_id' );
+		$user_email = trim( $request->get_param( 'user_email' ) );
+		$customer_orders = [];
 
-		if ( is_user_logged_in() || $token_id ) {
-			if ( is_user_logged_in() ) {
-				$user_id = get_current_user_id();
-			} else {
+		if ( ! empty( $user_email ) || $token_id ) {
+			if ( empty( $user_email ) ) {
 				$user = UserController::get_user_by_token( $token_id );
-				$user_id = $user->ID;
+			} else {
+				$user = get_user_by( 'email', $user_email );
+				$user = false === $user ? 0 : $user;
 			}
 
+			// Return early since the $user is not found.
+			if ( 0 === $user ) {
+				return [];
+			}
+
+			$user_id = $user->ID;
 			$customer_orders = get_posts( array(
 				'posts_per_page'	=> self::ORDERS_PER_PAGE,
 				'meta_key'    		=> '_customer_user',
@@ -268,11 +291,8 @@ class Order extends AbstractEndpoint {
 				'post_type'   		=> wc_get_order_types(),
 				'post_status' 		=> array_keys( wc_get_order_statuses() ),
 			) );
-
-			return $customer_orders;
 		}
-
-		return [];
+		return $customer_orders;
 	}
 
 	/**

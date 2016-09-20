@@ -80,22 +80,13 @@ class MultipleCart extends AbstractEndpoint {
 			return $validate;
 		}
 
-		$cart_class = new Cart();
-		$cart = $cart_class::get_cart();
-
-		if ( $token_id ) {
-			$user = UserController::get_user_by_token( $token_id );
-
-			if ( $user ) {
-				$cart = get_user_meta( $user->ID, Cart::CART_USER_META, true );
-			}
-		}
+		$cart = Cart::get_cart( $token_id );
 
 		do_action( Hooks::PRE_MULTIPLE_CART_ITEMS, $cart, $request );
 
 		foreach ( $params as $product ) {
 			$quantity = isset( $product['quantity'] ) ? $product['quantity'] : 1;
-			$cart = $cart_class::add_product_by_id( $cart, $product['product_id'], $quantity );
+			$cart = Cart::add_product_by_id( $cart, $product['product_id'], $quantity );
 		}
 
 		if ( $token_id ) {
