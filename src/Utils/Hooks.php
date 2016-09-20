@@ -15,4 +15,5 @@ interface Hooks {
 	const PRE_MULTIPLE_CART_ITEMS = 'ln_wc_pre_multiple_cart';
 	const AFTER_MULTIPLE_CART_ITEMS = 'ln_wc_pre_after_cart';
 	const FORMAT_ORDER_FILTER = 'ln_wc_format_order';
+	const ORDER_STATUSES = 'ln_wc_order_statuses';
 }
