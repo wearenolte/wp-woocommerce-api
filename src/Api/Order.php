@@ -284,12 +284,13 @@ class Order extends AbstractEndpoint {
 			}
 
 			$user_id = $user->ID;
+			$order_statuses = apply_filters( Hooks::ORDER_STATUSES, array_keys( wc_get_order_statuses() ) );
 			$customer_orders = get_posts( array(
 				'posts_per_page'	=> self::ORDERS_PER_PAGE,
 				'meta_key'    		=> '_customer_user',
 				'meta_value'  		=> $user_id,
 				'post_type'   		=> wc_get_order_types(),
-				'post_status' 		=> array_keys( wc_get_order_statuses() ),
+				'post_status' 		=> $order_statuses,
 			) );
 		}
 		return $customer_orders;
