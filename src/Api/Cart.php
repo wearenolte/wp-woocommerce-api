@@ -207,9 +207,11 @@ class Cart extends AbstractEndpoint {
 				$cart = get_user_meta( $user->ID, self::CART_USER_META, true );
 
 				if ( $cart ) {
+					$cart->calculate_totals();
 					return $cart;
 				} else {
 					$cart = new \WC_Cart();
+					$cart->calculate_totals();
 					update_user_meta( $user->ID, self::CART_USER_META, $cart );
 					return $cart;
 				}
@@ -218,8 +220,10 @@ class Cart extends AbstractEndpoint {
 
 		// Else, we use the session cart.
 		\WC()->cart->get_cart_from_session();
+		$cart = \WC()->cart;
+		$cart->calculate_totals();
 
-		return \WC()->cart;
+		return $cart;
 	}
 
 	/**

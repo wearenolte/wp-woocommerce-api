@@ -99,6 +99,8 @@ class MultipleCart extends AbstractEndpoint {
 
 		do_action( Hooks::AFTER_MULTIPLE_CART_ITEMS, $cart, $request );
 
+		$cart->calculate_totals();
+
 		return $cart;
 	}
 
