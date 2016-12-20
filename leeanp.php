@@ -3,8 +3,8 @@
  * Plugin Name: Lean Woocommerce Api
  * Description: Woocommerce API endpoints for Lean.
  * Version: 0.1.0
- * Author: Moxie
- * Author URI: http://getmoxied.net
+ * Author: Nolte
+ * Author URI: http://wearenolte.com
  * Text Domain: leanwoocommerceapi
  */
 
